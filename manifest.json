@@ -1,0 +1,14 @@
+{
+	"manifest_version": 2,
+	"name": "Smart Findr",
+	"description": "This extension will search a page for a given word, and words similar to that given word",
+	"version": 1.0,
+	
+	"browser action": {
+		"default_icon": "icon.png",
+		"default_popup": "popup.html"
+	},
+	"permissions": [
+		"activeTab"
+	]
+}
