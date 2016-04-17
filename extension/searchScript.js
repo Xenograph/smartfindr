@@ -1,39 +1,79 @@
-var gWordList;
-
-function arrayOutput(element, index, array) {
-	var TRange = null;
-	if (parseInt(navigator.appVersion)<4)
-		return;
-	var strFound;
-	if(window.find) {
-		// CODE FOR BROWSERS THAT SUPPORT window.find
-		strFound = self.find(element);
-		if(!strFound) {
-			strFound = self.find(element,0,1);
-			while(self.find(element,0,1))
-				continue;
-		}
-	}
-	if(!strFound)
-		alert("String '" + element + "' not found!");
-}
+var gTextNodes = textNodesUnder(document.body);
+var gRanges = null;
+var gSelectNum = null;
 
 function handleSetQuery(wordList) {
-	gWordList = wordList;
+	gRanges = getRanges(wordList);
+	if(gRanges.length > 0) {
+		selectRange(gRanges[0]);
+		gSelectNum = 0;
+	}
 }
 
 function handlePrevious() {
-	
+	if(gSelectNum > 0) {
+		gSelectNum--;
+		selectRange(gRanges[gSelectNum]);
+	}
 }
 
 function handleNext() {
-	
+	if(gSelectNum < gRanges.length - 1) {
+		gSelectNum++;
+		selectRange(gRanges[gSelectNum]);
+	}
+}
+
+function selectRange(range) {
+	var sel = window.getSelection();
+	sel.removeAllRanges();
+	sel.addRange(range);
+}
+
+function getRanges(words) {
+	var ranges = [];
+	gTextNodes.forEach(function(textNode) {
+		words.forEach(function(word) {
+			var indices = getIndicesOf(word, textNode.textContent, false);
+			indices.forEach(function(index) {
+				var range = document.createRange();
+				range.setStart(textNode, index);
+				range.setEnd(textNode, index + word.length);
+				ranges.push(range);
+			});
+		});
+	});
+	return ranges.sort(function(a, b) {
+		a.compareBoundaryPoints(Range.START_TO_START, b);
+	});
+}
+
+function textNodesUnder(el) {
+	var n;
+	var a = [];
+	var walk = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null, false);
+	while(n = walk.nextNode()) {
+		a.push(n);
+	}
+	return a;
+}
+
+function getIndicesOf(searchStr, str, caseSensitive) {
+    var startIndex = 0, searchStrLen = searchStr.length;
+    var index, indices = [];
+    if(!caseSensitive) {
+        str = str.toLowerCase();
+        searchStr = searchStr.toLowerCase();
+    }
+    while((index = str.indexOf(searchStr, startIndex)) > -1) {
+        indices.push(index);
+        startIndex = index + searchStrLen;
+    }
+    return indices;
 }
  
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 	if(request.action == "setquery") {
-		//request.forEach(arrayOutput)
-		//arrayOutput(request.data[0] ,0, 0);
 		handleSetQuery(request.data);
 	} else if (request.action == "previous") {
 		handlePrevious();
