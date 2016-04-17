@@ -7,6 +7,8 @@ function handleSetQuery(wordList) {
 	if(gRanges.length > 0) {
 		selectRange(gRanges[0]);
 		gSelectNum = 0;
+	} else {
+		handleClear();
 	}
 }
 
@@ -28,11 +30,16 @@ function selectRange(range) {
 	var sel = window.getSelection();
 	sel.removeAllRanges();
 	sel.addRange(range);
+	range.startContainer.parentElement.scrollIntoView();
+	console.log(range.startContainer.parentElement);
 }
 
 function getRanges(words) {
 	var ranges = [];
-	gTextNodes.forEach(function(textNode) {
+	textNodesUnder(document.body).forEach(function(textNode) {
+		if(textNode.parentElement.tagName.toLowerCase() == "script") {
+			return;
+		}
 		words.forEach(function(word) {
 			var indices = getIndicesOf(word, textNode.textContent, false);
 			indices.forEach(function(index) {
@@ -71,14 +78,23 @@ function getIndicesOf(searchStr, str, caseSensitive) {
     }
     return indices;
 }
- 
+
+function handleClear() {
+	var sel = window.getSelection();
+	sel.removeAllRanges();
+	var gRanges = null;
+	var gSelectNum = null;
+}
+
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 	if(request.action == "setquery") {
 		handleSetQuery(request.data);
-	} else if (request.action == "previous") {
+	} else if(request.action == "previous") {
 		handlePrevious();
-	} else if (request.action == "next") {
+	} else if(request.action == "next") {
 		handleNext();
+	} else if(request.action == "clear") {
+		handleClear();
 	} else {
 		alert("Error in message passing!");
 	}
