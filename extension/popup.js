@@ -32,7 +32,10 @@ function onClickPrevious() {
 }
 
 function onClickNext() {
-	gKeywords = false;
+	if(gKeywords) {
+		gKeywords = false;
+		gQuery = null;
+	}
 	var userText = document.getElementById('searchText').value;
 	if(userText == "") {
 		sendMessageToTab({action: "clear"});
@@ -60,3 +63,4 @@ function sendMessageToTab(msg) {
 
 document.getElementById('previous').addEventListener('click', onClickPrevious);
 document.getElementById('next').addEventListener('click', onClickNext);
+document.getElementById('highlight').addEventListener('click', onClickKeywords);
