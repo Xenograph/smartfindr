@@ -58,7 +58,6 @@ function getRanges(words) {
 			});
 		});
 	});
-	console.log('d');
 	return ranges.sort(function(a, b) {
 		a.compareBoundaryPoints(Range.START_TO_START, b);
 	});
@@ -83,7 +82,6 @@ function getIndicesOf(searchStr, str, caseSensitive) {
     }
 	
 	while ((index = str.indexOf(searchStr, startIndex)) > -1) {
-		console.log('e');
         indices.push(index);
         startIndex = index + searchStrLen;
     }
