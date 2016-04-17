@@ -1,4 +1,4 @@
- function hello() {
+ function onClickSetQuery() {
 	var userText = document.getElementById('searchText').value;
 	
 	var xmlHttp = new XMLHttpRequest();
@@ -10,7 +10,20 @@
 	var synonymArray = JSON.parse(synonyms);
 	
 	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-		chrome.tabs.sendMessage(tabs[0].id, synonymArray);
+		chrome.tabs.sendMessage(tabs[0].id, {action: "setquery", data: synonymArray});
 	});
 }
-document.getElementById('checkPage').addEventListener('click', hello);
+function onClickPrevious() {
+	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+		console.log("senswer");
+		chrome.tabs.sendMessage(tabs[0].id, {action: "previous"});
+	});
+}
+function onClickNext() {
+	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+		chrome.tabs.sendMessage(tabs[0].id, {action: "next"});
+	});
+}
+document.getElementById('checkPage').addEventListener('click', onClickSetQuery);
+document.getElementById('previous').addEventListener('click', onClickPrevious);
+document.getElementById('next').addEventListener('click', onClickNext);
