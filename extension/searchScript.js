@@ -1,4 +1,5 @@
 var gWordList;
+var rangeArray;
 
 function arrayOutput(element, index, array) {
 	var TRange = null;
@@ -20,6 +21,11 @@ function arrayOutput(element, index, array) {
 
 function handleSetQuery(wordList) {
 	gWordList = wordList;
+	rangeArray = [];
+	wordList.forEach(addWordRanges);
+	alert(rangeArray);
+	rangeArray.forEach(sortRangeArray);
+	alert(rangeArray);
 }
 
 function handlePrevious() {
@@ -28,6 +34,34 @@ function handlePrevious() {
 
 function handleNext() {
 	
+}
+
+function addWordRanges(element, index, array) {
+	var word = element;
+	while(window.find(word)) {
+		var range = window.getSelection().getRangeAt(0);
+		rangeArray.push(range);
+	}
+	window.getSelection().empty();
+}
+
+function sortRangeArray() {
+	var i;
+	for (i = rangeArray.length; i > 0; i--) {
+		var z;
+		for (z=0; z < i-1; z++) {
+			var compareValues = rangeArray[z].compareBoundaryPoints(Range.START_TO_START, rangeArray[z+1]);
+			if(compareValues == 1) {
+				var temp = rangeArray[z+1];
+				rangeArray[z+1] = rangeArray[z];
+				rangeArray[z] = temp;
+			} else if (compareValues == -1 || compareValues == 0) {
+				//dont swap
+			} else {
+				alert("error in comparing range values");
+			}
+		}
+	}
 }
  
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
