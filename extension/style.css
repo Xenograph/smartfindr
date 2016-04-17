@@ -1,7 +1,6 @@
 * {
   box-sizing: border-box;
 }
-
 /*
 Button stylings
 */
@@ -16,6 +15,10 @@ Button stylings
 	position:absolute;
 	top:45px;
 	left:8px;
+}
+
+#watsonTest{
+	left:20px;
 }
 
 
