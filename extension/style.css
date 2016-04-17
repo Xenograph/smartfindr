@@ -17,8 +17,14 @@ Button stylings
 	left:8px;
 }
 
-#watsonTest{
-	left:20px;
+.button-highlight {
+	background: rgb(225,225,51);
+}
+
+#highlight {
+	position:absolute;
+	top:75px;
+	left:30px;
 }
 
 
@@ -155,6 +161,8 @@ input:focus ~ .highlight {
 
 
 /* ANIMATIONS ================ */
+
+
 
 @-webkit-keyframes inputHighlighter {
   from {
