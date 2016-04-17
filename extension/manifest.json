@@ -17,11 +17,9 @@
 		"default_popup": "popup.html"
 	},
 	
-	"background": {
-		"scripts": ["background.js"]
-	},
-	
 	"permissions": [
-		"activeTab"
+		"activeTab",
+		"tabs",
+		"<all_urls>"
 	]
 }
