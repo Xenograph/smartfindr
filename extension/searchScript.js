@@ -1,3 +1,5 @@
+var gWordList;
+
 function arrayOutput(element, index, array) {
 	var TRange = null;
 	if (parseInt(navigator.appVersion)<4)
@@ -15,19 +17,29 @@ function arrayOutput(element, index, array) {
 	if(!strFound)
 		alert("String '" + element + "' not found!");
 }
+
+function handleSetQuery(wordList) {
+	gWordList = wordList;
+}
+
+function handlePrevious() {
+	
+}
+
+function handleNext() {
+	
+}
  
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-	console.log("request");
-	alert("2");
 	if(request.action == "setquery") {
 		//request.forEach(arrayOutput)
 		//arrayOutput(request.data[0] ,0, 0);
-		alert("setquery");
+		handleSetQuery(request.data);
 	} else if (request.action == "previous") {
-		alert("prev");
+		handlePrevious();
 	} else if (request.action == "next") {
-		alert("next");
+		handleNext();
 	} else {
-		alert("Error!");
+		alert("Error in message passing!");
 	}
 });
