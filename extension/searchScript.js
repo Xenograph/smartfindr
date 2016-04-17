@@ -72,8 +72,9 @@ function getIndicesOf(searchStr, str, caseSensitive) {
         str = str.toLowerCase();
         searchStr = searchStr.toLowerCase();
     }
-    while((index = str.indexOf(searchStr, startIndex)) > -1) {
-        indices.push(index);
+	var regex = new RegExp(" " + searchStr + "[ .?!]");
+	while((index = str.substr(startIndex).search(regex)) > -1) {
+        indices.push(index + 1);
         startIndex = index + searchStrLen;
     }
     return indices;
