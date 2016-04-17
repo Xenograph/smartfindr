@@ -11,7 +11,7 @@ server.get('/:word', function(req, res) {
         var synonyms = new Set();
         results.forEach(function(result) {
             result.synonyms.forEach(function(synonym) {
-                synonyms.add(synonym.replace(/_/g, ' ')); 
+                synonyms.add(synonym.replace(/[_-]/g, ' ')); 
             });
         });
         res.send([...synonyms]);
