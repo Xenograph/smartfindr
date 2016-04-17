@@ -17,17 +17,6 @@ function arrayOutput(element, index, array) {
 }
  
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-	console.log("request");
-	alert("2");
-	if(request.action == "setquery") {
-		//request.forEach(arrayOutput)
-		arrayOutput(request.data[0] ,0, 0);
-		alert("setquery");
-	} else if (request.action == "previous") {
-		alert("prev");
-	} else if (request.action == "next") {
-		alert("next");
-	} else {
-		alert("Error!");
-	}
+	//request.forEach(arrayOutput)
+	arrayOutput(request[0] ,0, 0);
 });
