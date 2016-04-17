@@ -1,10 +1,10 @@
  var gQuery = null;
+ var gKeywords = false;
  
  function doQuery(userText) {
-	 console.log(userText);
 	gQuery = userText;
 	var xmlHttp = new XMLHttpRequest();
-	var url = "http://smartfindr-server.mybluemix.net/" + userText;
+	var url = "http://smartfindr-server.mybluemix.net/synonyms/" + userText;
     xmlHttp.open("GET", url, false);
     xmlHttp.send(null);
     var synonyms = xmlHttp.responseText;
@@ -32,6 +32,7 @@ function onClickPrevious() {
 }
 
 function onClickNext() {
+	gKeywords = false;
 	var userText = document.getElementById('searchText').value;
 	if(userText == "") {
 		sendMessageToTab({action: "clear"});
@@ -39,6 +40,15 @@ function onClickNext() {
 		doQuery(userText);
 	} else {
 		sendMessageToTab({action: "next"});
+	}
+}
+
+function onClickKeywords() {
+	if(gKeywords) {
+		sendMessageToTab({action: "next"});
+	} else {
+		sendMessageToTab({action: "keywords"});
+		gKeywords = true;
 	}
 }
 

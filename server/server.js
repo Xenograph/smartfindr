@@ -1,12 +1,15 @@
 var Express = require('express');
 var WordNet = require('node-wordnet');
+var https = require('https');
 
 var port = process.env.PORT || 3000;
 
 var server = Express();
 var wordnet = new WordNet();
 
-server.get('/:word', function(req, res) {
+var apiKey = "INSERT YOUR API KEY HERE";
+
+server.get('/synonyms/:word', function(req, res) {
     wordnet.lookup(req.params.word, function(results) {
         var synonyms = new Set();
         results.forEach(function(result) {
@@ -16,6 +19,19 @@ server.get('/:word', function(req, res) {
         });
         res.send([...synonyms]);
     });
+});
+
+server.get('/keywords', function(req, res) {
+   var url = req.query.url;
+   var watsonRequest = "https://gateway-a.watsonplatform.net/calls";
+   watsonRequest = watsonRequest + "/url/URLGetRankedKeywords?maxRetrieve=10&outputMode=json&apikey=";
+   watsonRequest = watsonRequest + apiKey + "&url=" + url;
+   https.get(watsonRequest, function(watsonResult) {
+        watsonResult.setEncoding('utf8');
+        watsonResult.on('data', function (chunk) {
+            res.send(JSON.parse(chunk));
+        });
+   });
 });
 
 server.listen(port, function() {

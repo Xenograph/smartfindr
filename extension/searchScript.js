@@ -1,4 +1,3 @@
-var gTextNodes = textNodesUnder(document.body);
 var gRanges = null;
 var gSelectNum = null;
 
@@ -26,12 +25,21 @@ function handleNext() {
 	}
 }
 
+function handleMatchKeywords() {
+	gRanges = getRanges(getKeyWords());
+	if(gRanges.length > 0) {
+		selectRange(gRanges[0]);
+		gSelectNum = 0;
+	} else {
+		handleClear();
+	}
+}
+
 function selectRange(range) {
 	var sel = window.getSelection();
 	sel.removeAllRanges();
 	sel.addRange(range);
 	range.startContainer.parentElement.scrollIntoView();
-	console.log(range.startContainer.parentElement);
 }
 
 function getRanges(words) {
@@ -50,6 +58,7 @@ function getRanges(words) {
 			});
 		});
 	});
+	console.log('d');
 	return ranges.sort(function(a, b) {
 		a.compareBoundaryPoints(Range.START_TO_START, b);
 	});
@@ -72,9 +81,10 @@ function getIndicesOf(searchStr, str, caseSensitive) {
         str = str.toLowerCase();
         searchStr = searchStr.toLowerCase();
     }
-	var regex = new RegExp(" " + searchStr + "[ .?!]");
-	while((index = str.substr(startIndex).search(regex)) > -1) {
-        indices.push(index + 1);
+	
+	while ((index = str.indexOf(searchStr, startIndex)) > -1) {
+		console.log('e');
+        indices.push(index);
         startIndex = index + searchStrLen;
     }
     return indices;
@@ -87,6 +97,33 @@ function handleClear() {
 	var gSelectNum = null;
 }
 
+function getKeyWords() {
+	var url = "https://smartfindr-server.mybluemix.net/keywords?url=" + window.location.href;
+	var xmlHttp = new XMLHttpRequest();
+	xmlHttp.open("GET", url, false);
+	xmlHttp.send(null);
+	var watsonReceipt = xmlHttp.responseText;
+	var wholeReturn = JSON.parse(watsonReceipt);
+	var keyWordsWhole = wholeReturn.keywords;
+	
+	var keyWords = [];
+	keyWordsWhole.forEach(function(keyword) {
+		keyWords.push(keyword.text);
+	});
+	return keyWords;
+}
+
+function matchKeyWords(wordList) {
+	var keyWords = getKeyWords();
+	var matchedWords = [];
+	keyWords.forEach(function(keyWord) {
+		if(wordList.indexOf(keyWord) > -1) {
+			matchedWords.push(keyWord);
+		}
+	});
+	return matchedWords;
+}
+
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 	if(request.action == "setquery") {
 		handleSetQuery(request.data);
@@ -96,6 +133,8 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 		handleNext();
 	} else if(request.action == "clear") {
 		handleClear();
+	} else if(request.action == "keywords") {
+		handleMatchKeywords();
 	} else {
 		alert("Error in message passing!");
 	}
